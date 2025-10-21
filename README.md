@@ -224,26 +224,6 @@ Contributions are what make the open-source community such an amazing place to l
 4. **Push** to the branch (`git push origin feature/AmazingFeature`)
 5. **Open** a Pull Request
 
-### Ideas for Contributions
-
-- 🎨 Add more wave types (square, triangle, sawtooth)
-- 🎵 Add audio playback of the beat phenomena
-- 📱 Improve mobile responsiveness
-- 🌍 Add internationalization (i18n)
-- 📚 Add more physics examples
-- 🎓 Create educational materials or tutorials
-- 🐛 Fix bugs or improve performance
-- 📖 Improve documentation
-
-## 📝 Notes
-
-- **Browser Compatibility**: Works best on modern browsers (Chrome, Firefox, Safari, Edge). Internet Explorer is not supported.
-- **Performance**: The JavaScript version handles up to 20,000 data points smoothly. For larger datasets, consider the Python version.
-- **Offline Use**: After the first load, the JavaScript version can work offline (all CDN resources are cached).
-- **Customization**: Both versions are easy to customize - modify colors, add features, or change the physics calculations.
-- **Educational Use**: Perfect for physics classrooms, online courses, or self-study.
-- **No License Restrictions**: Feel free to use, modify, and distribute as needed.
-
 ## 💡 Technical Details
 
 ### JavaScript Version
