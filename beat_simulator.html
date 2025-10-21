@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beat Phenomena Simulator</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary: #64748b;
+            --accent: #0891b2;
+            --success: #059669;
+            --danger: #dc2626;
+            --warning: #d97706;
+            
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #94a3b8;
+            
+            --border-light: #e2e8f0;
+            --border-medium: #cbd5e1;
+            --border-dark: #94a3b8;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 24px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+        }
+        
+        /* Header */
+        .header {
+            background-color: var(--primary);
+            color: white;
+            padding: 32px 40px;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        .header-subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+        
+        .version-badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+        
+        /* Controls Section */
+        .controls-section {
+            padding: 32px 40px;
+            background-color: var(--bg-primary);
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-light);
+        }
+        
+        .section-header i {
+            color: var(--primary);
+            font-size: 20px;
+        }
+        
+        .section-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .control-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        
+        .control-label i {
+            color: var(--primary);
+            font-size: 16px;
+            width: 20px;
+        }
+        
+        .control-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-medium);
+            border-radius: 6px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            transition: all 0.2s ease;
+        }
+        
+        .control-input:hover {
+            border-color: var(--border-dark);
+        }
+        
+        .control-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .control-hint {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+        }
+        
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .btn i {
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-secondary {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-medium);
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--border-light);
+            border-color: var(--border-dark);
+        }
+        
+        /* Info Panel */
+        .info-panel {
+            margin: 0 40px 32px 40px;
+            padding: 24px;
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            display: none;
+        }
+        
+        .info-panel.show {
+            display: block;
+        }
+        
+        .info-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .info-header i {
+            color: var(--primary);
+            font-size: 20px;
+        }
+        
+        .info-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        
+        .info-item {
+            background-color: white;
+            padding: 16px;
+            border-radius: 6px;
+            border: 1px solid #dbeafe;
+        }
+        
+        .info-item-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+        
+        .info-item-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .info-item-unit {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            margin-left: 4px;
+        }
+        
+        /* Plots Section */
+        .plots-section {
+            padding: 32px 40px;
+            background-color: var(--bg-secondary);
+        }
+        
+        .plot-container {
+            background-color: var(--bg-primary);
+            border-radius: 6px;
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+        }
+        
+        /* Footer */
+        .footer {
+            padding: 24px 40px;
+            background-color: var(--bg-tertiary);
+            border-top: 1px solid var(--border-light);
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            text-align: center;
+        }
+        
+        .footer-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .footer-formula {
+            font-family: 'Courier New', monospace;
+            background-color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: 1px solid var(--border-light);
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .footer-meta {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+        
+        /* Loading State */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 32px;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            margin-top: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+            
+            .header,
+            .controls-section,
+            .plots-section,
+            .footer {
+                padding: 24px 20px;
+            }
+            
+            .info-panel {
+                margin: 0 20px 24px 20px;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .control-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="header-title">
+                    <div class="header-icon">
+                        <i class="fas fa-wave-square"></i>
+                    </div>
+                    <div>
+                        <h1>Beat Phenomena Simulator</h1>
+                        <div class="header-subtitle">Interactive Wave Interference Analysis</div>
+                    </div>
+                </div>
+                <div class="version-badge">v1.0</div>
+            </div>
+        </div>
+        
+        <!-- Controls -->
+        <div class="controls-section">
+            <div class="section-header">
+                <i class="fas fa-sliders-h"></i>
+                <h2>Simulation Parameters</h2>
+            </div>
+            
+            <div class="control-grid">
+                <div class="control-group">
+                    <label class="control-label">
+                        <i class="fas fa-chart-line"></i>
+                        Amplitude (A)
+                    </label>
+                    <input type="number" id="amplitude" class="control-input" value="1" step="0.1" min="0.1" max="10">
+                    <span class="control-hint">Wave amplitude value</span>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">
+                        <i class="fas fa-broadcast-tower"></i>
+                        Frequency 1 (f₁)
+                    </label>
+                    <input type="number" id="freq1" class="control-input" value="260" step="1" min="1" max="1000">
+                    <span class="control-hint">First wave frequency in Hz</span>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">
+                        <i class="fas fa-broadcast-tower"></i>
+                        Frequency 2 (f₂)
+                    </label>
+                    <input type="number" id="freq2" class="control-input" value="252" step="1" min="1" max="1000">
+                    <span class="control-hint">Second wave frequency in Hz</span>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="simulate()">
+                    <i class="fas fa-play"></i>
+                    Generate Simulation
+                </button>
+                <button class="btn btn-secondary" onclick="reset()">
+                    <i class="fas fa-redo"></i>
+                    Reset Defaults
+                </button>
+            </div>
+        </div>
+        
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div class="loading-text">Generating visualization...</div>
+        </div>
+        
+        <!-- Info Panel -->
+        <div class="info-panel" id="infoPanel">
+            <div class="info-header">
+                <i class="fas fa-info-circle"></i>
+                <h3>Calculated Results</h3>
+            </div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-item-label">Amplitude</div>
+                    <div class="info-item-value" id="infoA">-</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-item-label">Frequency 1</div>
+                    <div class="info-item-value">
+                        <span id="infoF1">-</span>
+                        <span class="info-item-unit">Hz</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-item-label">Frequency 2</div>
+                    <div class="info-item-value">
+                        <span id="infoF2">-</span>
+                        <span class="info-item-unit">Hz</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-item-label">Beat Frequency</div>
+                    <div class="info-item-value">
+                        <span id="infoBeat">-</span>
+                        <span class="info-item-unit">Hz</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-item-label">Average Frequency</div>
+                    <div class="info-item-value">
+                        <span id="infoAvg">-</span>
+                        <span class="info-item-unit">Hz</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-item-label">Beat Period</div>
+                    <div class="info-item-value">
+                        <span id="infoPeriod">-</span>
+                        <span class="info-item-unit">s</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Plots -->
+        <div class="plots-section">
+            <div class="plot-container" id="plotsContainer"></div>
+        </div>        
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-content">
+                <p class="footer-text">
+                    Beat phenomena occurs when two waves of slightly different frequencies interfere, creating a periodic variation in amplitude.
+                </p>
+                <div>
+                    <span class="footer-formula">f_beat = |f₁ - f₂|</span>
+                </div>
+                <p class="footer-meta">
+                    Physics Simulation Tool • Powered by Plotly.js
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        window.onload = function() {
+            simulate();
+        };
+        
+        function simulate() {
+            // Show loading briefly to allow UI to update
+            const loadingEl = document.getElementById('loading');
+            loadingEl.classList.add('show');
+            
+            // Use requestAnimationFrame to ensure UI updates before heavy computation
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    try {
+                        generateSimulation();
+                    } catch (error) {
+                        console.error('Simulation error:', error);
+                        alert('Error generating simulation: ' + error.message);
+                    } finally {
+                        loadingEl.classList.remove('show');
+                    }
+                });
+            });
+        }
+        
+        function generateSimulation() {
+            const A = parseFloat(document.getElementById('amplitude').value);
+            const f1 = parseFloat(document.getElementById('freq1').value);
+            const f2 = parseFloat(document.getElementById('freq2').value);
+            
+            if (isNaN(A) || isNaN(f1) || isNaN(f2) || A <= 0 || f1 <= 0 || f2 <= 0) {
+                alert('Please enter valid positive numbers for all parameters.');
+                return;
+            }
+            
+            const f_beat = Math.abs(f1 - f2);
+            const f_avg = (f1 + f2) / 2;
+            const beat_period = f_beat > 0 ? 1 / f_beat : Infinity;
+            
+            document.getElementById('infoPanel').classList.add('show');
+            document.getElementById('infoA').textContent = A.toFixed(2);
+            document.getElementById('infoF1').textContent = f1.toFixed(1);
+            document.getElementById('infoF2').textContent = f2.toFixed(1);
+            document.getElementById('infoBeat').textContent = f_beat.toFixed(1);
+            document.getElementById('infoAvg').textContent = f_avg.toFixed(1);
+            document.getElementById('infoPeriod').textContent = beat_period.toFixed(3);
+            
+            const duration = 2;
+            const samplingRate = 10000;
+            const numPoints = duration * samplingRate;
+            const t = [];
+            const wave1 = [];
+            const wave2 = [];
+            const resultant = [];
+            const envelopeUpper = [];
+            const envelopeLower = [];
+            
+            for (let i = 0; i < numPoints; i++) {
+                const time = (i / samplingRate);
+                t.push(time);
+                
+                const w1 = A * Math.sin(2 * Math.PI * f1 * time);
+                const w2 = A * Math.sin(2 * Math.PI * f2 * time);
+                const res = w1 + w2;
+                const env = 2 * A * Math.abs(Math.cos(2 * Math.PI * f_beat * time / 2));
+                
+                wave1.push(w1);
+                wave2.push(w2);
+                resultant.push(res);
+                envelopeUpper.push(env);
+                envelopeLower.push(-env);
+            }
+            
+            const zoomLimit = 0.2;
+            const zoomIndex = Math.floor(zoomLimit * samplingRate);
+            const t_zoom = t.slice(0, zoomIndex);
+            const wave1_zoom = wave1.slice(0, zoomIndex);
+            const wave2_zoom = wave2.slice(0, zoomIndex);
+            const resultant_zoom = resultant.slice(0, zoomIndex);
+            const envelopeUpper_zoom = envelopeUpper.slice(0, zoomIndex);
+            const envelopeLower_zoom = envelopeLower.slice(0, zoomIndex);
+            
+            // Create traces for all subplots
+            const traces = [
+                // Row 1: Wave 1
+                {
+                    x: t_zoom,
+                    y: wave1_zoom,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: `Wave 1: f₁ = ${f1} Hz`,
+                    line: { color: '#2563eb', width: 2 },
+                    xaxis: 'x1',
+                    yaxis: 'y1'
+                },
+                // Row 2: Wave 2
+                {
+                    x: t_zoom,
+                    y: wave2_zoom,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: `Wave 2: f₂ = ${f2} Hz`,
+                    line: { color: '#dc2626', width: 2 },
+                    xaxis: 'x2',
+                    yaxis: 'y2'
+                },
+                // Row 3: Resultant with envelope (zoomed)
+                {
+                    x: t_zoom,
+                    y: resultant_zoom,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: 'Resultant Wave',
+                    line: { color: '#059669', width: 2 },
+                    xaxis: 'x3',
+                    yaxis: 'y3'
+                },
+                {
+                    x: t_zoom,
+                    y: envelopeUpper_zoom,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: 'Envelope',
+                    line: { color: '#0891b2', width: 2, dash: 'dash' },
+                    xaxis: 'x3',
+                    yaxis: 'y3'
+                },
+                {
+                    x: t_zoom,
+                    y: envelopeLower_zoom,
+                    type: 'scatter',
+                    mode: 'lines',
+                    showlegend: false,
+                    line: { color: '#0891b2', width: 2, dash: 'dash' },
+                    xaxis: 'x3',
+                    yaxis: 'y3'
+                },
+                // Row 4: Complete beat pattern
+                {
+                    x: t,
+                    y: resultant,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: 'Resultant Wave (Full)',
+                    line: { color: '#059669', width: 1.5 },
+                    xaxis: 'x4',
+                    yaxis: 'y4'
+                },
+                {
+                    x: t,
+                    y: envelopeUpper,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: 'Envelope (Full)',
+                    line: { color: '#0891b2', width: 2, dash: 'dash' },
+                    xaxis: 'x4',
+                    yaxis: 'y4'
+                },
+                {
+                    x: t,
+                    y: envelopeLower,
+                    type: 'scatter',
+                    mode: 'lines',
+                    showlegend: false,
+                    line: { color: '#0891b2', width: 2, dash: 'dash' },
+                    xaxis: 'x4',
+                    yaxis: 'y4'
+                }
+            ];
+            
+            // Layout with subplots
+            const layout = {
+                height: 1200,
+                showlegend: true,
+                hovermode: 'x unified',
+                plot_bgcolor: '#ffffff',
+                paper_bgcolor: '#ffffff',
+                font: {
+                    family: 'Inter, sans-serif',
+                    size: 12,
+                    color: '#0f172a'
+                },
+                grid: { rows: 4, columns: 1, pattern: 'independent' },
+                
+                // Subplot titles
+                annotations: [
+                    {
+                        text: `<b>Wave 1 (f₁ = ${f1} Hz)</b>`,
+                        xref: 'paper',
+                        yref: 'paper',
+                        x: 0.5,
+                        y: 0.98,
+                        xanchor: 'center',
+                        yanchor: 'bottom',
+                        showarrow: false,
+                        font: { size: 14 }
+                    },
+                    {
+                        text: `<b>Wave 2 (f₂ = ${f2} Hz)</b>`,
+                        xref: 'paper',
+                        yref: 'paper',
+                        x: 0.5,
+                        y: 0.73,
+                        xanchor: 'center',
+                        yanchor: 'bottom',
+                        showarrow: false,
+                        font: { size: 14 }
+                    },
+                    {
+                        text: '<b>Resultant Wave (Beat Pattern) - Zoomed</b>',
+                        xref: 'paper',
+                        yref: 'paper',
+                        x: 0.5,
+                        y: 0.48,
+                        xanchor: 'center',
+                        yanchor: 'bottom',
+                        showarrow: false,
+                        font: { size: 14 }
+                    },
+                    {
+                        text: `<b>Complete Beat Pattern (Beat Frequency = ${f_beat.toFixed(1)} Hz)</b>`,
+                        xref: 'paper',
+                        yref: 'paper',
+                        x: 0.5,
+                        y: 0.23,
+                        xanchor: 'center',
+                        yanchor: 'bottom',
+                        showarrow: false,
+                        font: { size: 14 }
+                    }
+                ],
+                
+                // Axes for subplot 1
+                xaxis: {
+                    gridcolor: '#f1f5f9',
+                    linecolor: '#cbd5e1',
+                    zerolinecolor: '#94a3b8',
+                    domain: [0, 1],
+                    anchor: 'y1'
+                },
+                yaxis: {
+                    title: 'Amplitude',
+                    gridcolor: '#f1f5f9',
+                    linecolor: '#cbd5e1',
+                    zerolinecolor: '#94a3b8',
+                    domain: [0.77, 0.97],
+                    anchor: 'x1'
+                },
+                
+                // Axes for subplot 2
+                xaxis2: {
+                    gridcolor: '#f1f5f9',
+                    linecolor: '#cbd5e1',
+                    zerolinecolor: '#94a3b8',
+                    domain: [0, 1],
+                    anchor: 'y2'
+                },
+                yaxis2: {
+                    title: 'Amplitude',
+                    gridcolor: '#f1f5f9',
+                    linecolor: '#cbd5e1',
+                    zerolinecolor: '#94a3b8',
+                    domain: [0.52, 0.72],
+                    anchor: 'x2'
+                },
+                
+                // Axes for subplot 3
+                xaxis3: {
+                    gridcolor: '#f1f5f9',
+                    linecolor: '#cbd5e1',
+                    zerolinecolor: '#94a3b8',
+                    domain: [0, 1],
+                    anchor: 'y3'
+                },
+                yaxis3: {
+                    title: 'Amplitude',
+                    gridcolor: '#f1f5f9',
+                    linecolor: '#cbd5e1',
+                    zerolinecolor: '#94a3b8',
+                    domain: [0.27, 0.47],
+                    anchor: 'x3'
+                },
+                
+                // Axes for subplot 4
+                xaxis4: {
+                    title: 'Time (s)',
+                    gridcolor: '#f1f5f9',
+                    linecolor: '#cbd5e1',
+                    zerolinecolor: '#94a3b8',
+                    domain: [0, 1],
+                    anchor: 'y4'
+                },
+                yaxis4: {
+                    title: 'Amplitude',
+                    gridcolor: '#f1f5f9',
+                    linecolor: '#cbd5e1',
+                    zerolinecolor: '#94a3b8',
+                    domain: [0, 0.22],
+                    anchor: 'x4'
+                }
+            };
+            
+            const config = { 
+                responsive: true, 
+                displayModeBar: true, 
+                displaylogo: false,
+                modeBarButtonsToAdd: [
+                    'drawopenpath',
+                    'eraseshape'
+                ],
+                modeBarButtonsToRemove: [],
+                scrollZoom: true,
+                doubleClick: 'reset+autosize',
+                showTips: true,
+                toImageButtonOptions: {
+                    format: 'png',
+                    filename: 'beat_phenomena_simulation',
+                    height: 1200,
+                    width: 1400,
+                    scale: 2
+                }
+            };
+            
+            Plotly.newPlot('plotsContainer', traces, layout, config);
+        }
+        
+        function reset() {
+            document.getElementById('amplitude').value = 1;
+            document.getElementById('freq1').value = 260;
+            document.getElementById('freq2').value = 252;
+            simulate();
+        }
+        
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                simulate();
+            }
+        });
+    </script>
+</body>
+</html>
