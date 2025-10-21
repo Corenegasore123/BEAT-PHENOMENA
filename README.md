@@ -13,15 +13,13 @@
 
 Explore what happens when two sound waves with slightly different frequencies interfere with each other!
 
-[View Demo](#usage) • [Report Bug](../../issues) • [Request Feature](../../issues)
-
 </div>
 
 ---
 
 ## 📋 Table of Contents
 
-- [Two Versions Available](#-two-versions-available)
+- [Three Versions Available](#-three-versions-available)
 - [Features](#-features)
 - [Physics Background](#-physics-background)
 - [Quick Start](#-quick-start)
@@ -34,7 +32,7 @@ Explore what happens when two sound waves with slightly different frequencies in
 
 ---
 
-## 🎯 Two Versions Available
+## 🎯 Three Versions Available
 
 Choose the version that best fits your needs:
 
@@ -59,8 +57,21 @@ Choose the version that best fits your needs:
 - 📊 **Reproducible** - Generate consistent outputs for reports
 - 💾 **Scriptable** - Integrate into larger workflows
 - 📈 **Batch processing** - Generate multiple simulations programmatically
+- 🌐 **Interactive HTML output** - Generates `beat_simulation_python.html`
 
 **Perfect for:** Research, academic papers, custom analysis, or when you need Python's scientific computing power
+
+### Option 3: Pure Python (Matplotlib) 📊
+**File:** `beat_phenomena.py`
+
+✅ **Advantages:**
+- 📈 **Classic matplotlib** - Traditional scientific plotting
+- 🖥️ **Desktop application** - Native window display
+- 🔧 **Lightweight** - No web dependencies
+- 📝 **Educational** - Great for learning Python plotting
+- 💻 **Offline** - Completely standalone Python script
+
+**Perfect for:** Traditional Python workflows, offline analysis, or when you prefer matplotlib over web-based plots
 
 ## ✨ Features
 
@@ -123,7 +134,7 @@ y_resultant(t) = y₁(t) + y₂(t) = 2A cos(2πf_beat·t/2) sin(2πf_avg·t)
 
 That's it! No installation needed.
 
-### Method 2: Python Version
+### Method 2: Python + Plotly Version
 
 1. **Install dependencies:**
    ```bash
@@ -136,6 +147,20 @@ That's it! No installation needed.
    ```
 
 3. **Open** the generated `beat_simulation_python.html` file
+
+### Method 3: Pure Python (Matplotlib) Version
+
+1. **Install dependencies:**
+   ```bash
+   pip install numpy matplotlib
+   ```
+
+2. **Run the script:**
+   ```bash
+   python beat_phenomena.py
+   ```
+
+3. **View** the plots in the matplotlib window that opens
 
 ## 📖 Usage
 
@@ -241,18 +266,7 @@ Contributions are what make the open-source community such an amazing place to l
 If you find this project useful, please consider:
 
 - ⭐ **Starring the repository** - It helps others discover this tool!
-- 🐛 **Reporting bugs** - Help us improve by reporting issues
-- 💡 **Suggesting features** - Share your ideas for improvements
-- 📢 **Sharing** - Tell others about this tool
 - 🤝 **Contributing** - Submit pull requests with improvements
-
-### Questions or Issues?
-
-If you have questions or run into issues:
-
-1. Check the [Issues](../../issues) page for existing discussions
-2. Open a [new issue](../../issues/new) if your question hasn't been answered
-3. Provide as much detail as possible (browser version, error messages, screenshots)
 
 ---
 
